@@ -85,9 +85,9 @@
         private string filter;
 
         /// <summary>
-        ///     Initializes a new instance of the ShelvesetComparerViewModel class
+        /// Initializes a new instance of the <see cref="ShelvesetComparerViewModel"/> class.
         /// </summary>
-        /// <param name="serviceProvider">The service provider</param>
+        /// <param name="serviceProvider">The service provider.</param>
         public ShelvesetComparerViewModel([Import(typeof (SVsServiceProvider))] IServiceProvider serviceProvider)
         {
             this.files = new ObservableCollection<FileComparisonViewModel>();
@@ -140,7 +140,7 @@
             set
             {
                 this.summaryText = value;
-                this.NotifyPropertyChanged("SummaryText");
+                this.NotifyPropertyChanged(nameof(SummaryText));
             }
         }
 
@@ -157,7 +157,7 @@
             set
             {
                 this.filter = value;
-                this.NotifyPropertyChanged("Files");
+                this.NotifyPropertyChanged(nameof(Filter));
             }
         }
 
@@ -174,7 +174,7 @@
             set
             {
                 this.totalNumberOfFiles = value;
-                this.NotifyPropertyChanged("TotalNumberOfFiles");
+                this.NotifyPropertyChanged(nameof(TotalNumberOfFiles));
             }
         }
 
@@ -191,7 +191,7 @@
             set
             {
                 this.numberOfMatchingFiles = value;
-                this.NotifyPropertyChanged("NumberOfMatchingFiles");
+                this.NotifyPropertyChanged(nameof(NumberOfMatchingFiles));
             }
         }
 
@@ -208,7 +208,7 @@
             set
             {
                 this.numberOfDifferentFiles = value;
-                this.NotifyPropertyChanged("NumberOfDifferentFiles");
+                this.NotifyPropertyChanged(nameof(NumberOfDifferentFiles));
             }
         }
 
@@ -225,7 +225,7 @@
             set
             {
                 this.firstShelvesetName = value;
-                this.NotifyPropertyChanged("FirstShelvesetName");
+                this.NotifyPropertyChanged(nameof(FirstShelvesetName));
             }
         }
 
@@ -242,7 +242,7 @@
             set
             {
                 this.secondShelvesetName = value;
-                this.NotifyPropertyChanged("SecondShelvesetName");
+                this.NotifyPropertyChanged(nameof(SecondShelvesetName));
             }
         }
 
@@ -267,16 +267,20 @@
         /// </summary>
         /// <param name="firstShelveset">The first shelveset.</param>
         /// <param name="secondShelveset">The second shelveset</param>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="firstShelveset"/>
+        ///     or the <paramref name="secondShelveset"/> is <see langword="null" />.
+        /// </exception>
         public void Initialize(Shelveset firstShelveset, Shelveset secondShelveset)
         {
             if (firstShelveset == null)
             {
-                throw new ArgumentNullException("firstShelveset");
+                throw new ArgumentNullException(nameof(firstShelveset));
             }
 
             if (secondShelveset == null)
             {
-                throw new ArgumentNullException("secondShelveset");
+                throw new ArgumentNullException(nameof(secondShelveset));
             }
 
             var tfcontextManager = this.GetService<ITeamFoundationContextManager>();
@@ -455,10 +459,8 @@
         private static bool HasMatchingFileName(FileComparisonViewModel fileComparisonViewModel, string filter)
         {
             return
-                fileComparisonViewModel.FirstFileDisplayName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=
-                0 ||
-                fileComparisonViewModel.SecondFileDisplayName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=
-                0;
+                fileComparisonViewModel.FirstFileDisplayName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=0
+                ||fileComparisonViewModel.SecondFileDisplayName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0;
         }
 
         /// <summary>

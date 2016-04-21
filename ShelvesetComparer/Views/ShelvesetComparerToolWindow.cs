@@ -17,7 +17,7 @@ namespace Tfs.ShelvesetComparer.Views
     /// <summary>
     ///     This class implements the tool window exposed by this package and hosts a user control.
     /// </summary>
-    [Guid("0866ec06-7a85-4e90-8244-4da11ad1677b")]
+    [Guid("EEB0458C-6D7E-4CC9-AC5F-FA64866B4B44")]
     public sealed class ShelvesetComparerToolWindow : ToolWindowPane
     {
         /// <summary>

@@ -30,18 +30,12 @@ namespace Tfs.ShelvesetComparer.ViewModel
         /// <summary>
         ///     Gets the display name of the first file
         /// </summary>
-        public string FirstFileDisplayName
-        {
-            get { return GetFullFilePath(this.FirstFile); }
-        }
+        public string FirstFileDisplayName => GetFullFilePath(this.FirstFile);
 
         /// <summary>
         ///     Gets the display name of the second file
         /// </summary>
-        public string SecondFileDisplayName
-        {
-            get { return GetFullFilePath(this.SecondFile); }
-        }
+        public string SecondFileDisplayName => GetFullFilePath(this.SecondFile);
 
         /// <summary>
         ///     Gets or sets the Color of text.
@@ -55,8 +49,11 @@ namespace Tfs.ShelvesetComparer.ViewModel
         /// <returns>The full file path of the given pending change</returns>
         private static string GetFullFilePath(PendingChange pendingChange)
         {
-            return (pendingChange != null)
-                ? string.Format(CultureInfo.CurrentCulture, @"{0}/{1}", pendingChange.LocalOrServerFolder,
+            return pendingChange != null
+                ? string.Format(
+                    CultureInfo.CurrentCulture,
+                    @"{0}/{1}",
+                    pendingChange.LocalOrServerFolder,
                     pendingChange.FileName)
                 : string.Empty;
         }

@@ -13,11 +13,11 @@
     ///     This is the class that implements the package exposed by this assembly.
     /// </summary>
     [PackageRegistration(UseManagedResourcesOnly = true)]
-    [ProvideAutoLoad("ADFC4E64-0397-11D1-9F4E-00A0C911004F")]
+    [ProvideAutoLoad("64BBB0A3-9E71-4053-980E-C2AECBA66714")]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof (ShelvesetComparerToolWindow))]
-    [Guid("50f4bcb5-060b-4090-93c5-30d3260ddc8c")]
+    [Guid("274263AE-8D63-4BC0-B8E8-85CD44B5676B")]
     public sealed class ShelvesetComparerPackage : Package
     {
         /// <summary>
@@ -45,11 +45,11 @@
                 return;
             }
 
-            var menuCommandId = new CommandID(new Guid("def78c97-03e0-4caf-9c9c-4b70455da864"), (int)CommandIdShelvesetComparerMenu);
+            var menuCommandId = new CommandID(new Guid("EBC07634-7668-403D-9B3B-D6B6B50E307C"), (int)CommandIdShelvesetComparerMenu);
             var menuItem = new MenuCommand(this.MenuItemCallback, menuCommandId);
             mcs.AddCommand(menuItem);
 
-            var toolwndCommandId = new CommandID(new Guid("def78c97-03e0-4caf-9c9c-4b70455da864"), (int)CommandIdShelvesetComparerToolWindow);
+            var toolwndCommandId = new CommandID(new Guid("EBC07634-7668-403D-9B3B-D6B6B50E307C"), (int)CommandIdShelvesetComparerToolWindow);
             var menuToolWin = new MenuCommand(this.ShowToolWindow, toolwndCommandId);
             mcs.AddCommand(menuToolWin);
         }
