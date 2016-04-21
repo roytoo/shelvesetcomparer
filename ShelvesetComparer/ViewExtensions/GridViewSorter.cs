@@ -1,7 +1,18 @@
-﻿// <copyright file="GridViewSorter.cs" company="http://shelvesetcomparer.codeplex.com">Copyright http://shelvesetcomparer.codeplex.com. All Rights Reserved. This code released under the terms of the Microsoft Public License (MS-PL, http://opensource.org/licenses/ms-pl.html.) This is sample code only, do not use in production environments.</copyright>
-namespace WiredTechSolutions.ShelvesetComparer
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="GridViewSorter.cs" company="http://shelvesetcomparer.codeplex.com">
+//     Copyright http://shelvesetcomparer.codeplex.com. All Rights Reserved.
+//     This code released under the terms of the Microsoft Public License(MS-PL, http://opensource.org/licenses/ms-pl.html.)
+//     This is sample code only, do not use in production environments.
+// </copyright>
+// <summary>
+//   Custom property for sorting GridView headers
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Tfs.ShelvesetComparer.ViewExtensions
 {
     using System.ComponentModel;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
@@ -9,109 +20,97 @@ namespace WiredTechSolutions.ShelvesetComparer
     using System.Windows.Media;
 
     /// <summary>
-    /// Custom property for sorting GridView headers
+    ///     Custom property for sorting GridView headers
     /// </summary>
-    public class GridViewSorter
+    internal static class GridViewSorter
     {
+        #region [Properties]
         /// <summary>
-        /// DependencyProperty for ShowSortGlyph. 
+        ///     DependencyProperty for ShowSortGlyph.
         /// </summary>
-        private static readonly DependencyProperty ShowSortGlyphProperty = DependencyProperty.RegisterAttached("ShowSortGlyph", typeof(bool), typeof(GridViewSorter), new UIPropertyMetadata(true));
+        private static readonly DependencyProperty ShowSortGlyphProperty =
+            DependencyProperty.RegisterAttached(
+                "ShowSortGlyph",
+                typeof(bool),
+                typeof(GridViewSorter),
+                new UIPropertyMetadata(true));
 
         /// <summary>
-        /// DependencyProperty for SortGlyphAscending.
+        ///     DependencyProperty for SortGlyphAscending.
         /// </summary>
-        private static readonly DependencyProperty SortGlyphAscendingProperty = DependencyProperty.RegisterAttached("SortGlyphAscending", typeof(ImageSource), typeof(GridViewSorter), new UIPropertyMetadata(null));
+        private static readonly DependencyProperty SortGlyphAscendingProperty =
+            DependencyProperty.RegisterAttached(
+                "SortGlyphAscending",
+                typeof(ImageSource),
+                typeof(GridViewSorter),
+                new UIPropertyMetadata(null));
 
         /// <summary>
-        /// DependencyProperty for SortGlyphDescending.
+        ///     DependencyProperty for SortGlyphDescending.
         /// </summary>
-        private static readonly DependencyProperty SortGlyphDescendingProperty = DependencyProperty.RegisterAttached("SortGlyphDescending", typeof(ImageSource), typeof(GridViewSorter), new UIPropertyMetadata(null));
+        private static readonly DependencyProperty SortGlyphDescendingProperty =
+            DependencyProperty.RegisterAttached(
+                "SortGlyphDescending",
+                typeof(ImageSource),
+                typeof(GridViewSorter),
+                new UIPropertyMetadata(null));
 
         /// <summary>
-        /// DependencyProperty for SortedColumn.
+        ///     DependencyProperty for SortedColumn.
         /// </summary>
-        private static readonly DependencyProperty SortedColumnHeaderProperty = DependencyProperty.RegisterAttached("SortedColumnHeader", typeof(GridViewColumnHeader), typeof(GridViewSorter), new UIPropertyMetadata(null));
+        private static readonly DependencyProperty SortedColumnHeaderProperty =
+            DependencyProperty.RegisterAttached(
+                "SortedColumnHeader",
+                typeof(GridViewColumnHeader),
+                typeof(GridViewSorter),
+                new UIPropertyMetadata(null));
 
         /// <summary>
-        /// DependencyProperty for PropertyName.
+        ///     DependencyProperty for PropertyName.
         /// </summary>
-        private static readonly DependencyProperty PropertyNameProperty = DependencyProperty.RegisterAttached("PropertyName", typeof(string), typeof(GridViewSorter), new UIPropertyMetadata(null));
+        private static readonly DependencyProperty PropertyNameProperty =
+            DependencyProperty.RegisterAttached(
+                "PropertyName",
+                typeof(string),
+                typeof(GridViewSorter),
+                new UIPropertyMetadata(null));
 
         /// <summary>
-        /// DependencyProperty for AutoSort.
+        ///     DependencyProperty for AutoSort.
         /// </summary>
         private static readonly DependencyProperty AutoSortProperty =
             DependencyProperty.RegisterAttached(
                 "AutoSort",
                 typeof(bool),
                 typeof(GridViewSorter),
-                new UIPropertyMetadata(
-                    false,
-                    (o, e) =>
-                    {
-                        ListView listView = o as ListView;
-                        if (listView != null)
-                        {
-                            if (GetCommand(listView) == null) // Don't change click handler if a command is set
-                            {
-                                bool oldValue = (bool)e.OldValue;
-                                bool newValue = (bool)e.NewValue;
-                                if (oldValue && !newValue)
-                                {
-                                    listView.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(ColumnHeader_Click));
-                                }
-
-                                if (!oldValue && newValue)
-                                {
-                                    listView.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(ColumnHeader_Click));
-                                }
-                            }
-                        }
-                    }));
+                new UIPropertyMetadata(false, AutoSortPropertyChangedCallback));
 
         /// <summary>
-        /// DependencyProperty for Command.
+        ///     DependencyProperty for Command.
         /// </summary>
         private static readonly DependencyProperty CommandProperty =
             DependencyProperty.RegisterAttached(
                 "Command",
                 typeof(ICommand),
                 typeof(GridViewSorter),
-                new UIPropertyMetadata(
-                    null,
-                    (o, e) =>
-                    {
-                        ItemsControl listView = o as ItemsControl;
-                        if (listView != null)
-                        {
-                            if (!GetAutoSort(listView)) // Don't change click handler if AutoSort enabled
-                            {
-                                if (e.OldValue != null && e.NewValue == null)
-                                {
-                                    listView.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(ColumnHeader_Click));
-                                }
+                new UIPropertyMetadata(null, CommandPropertyChangedCallback));
 
-                                if (e.OldValue == null && e.NewValue != null)
-                                {
-                                    listView.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(ColumnHeader_Click));
-                                }
-                            }
-                        }
-                    }));
+        #endregion
+
+        #region [Public]
 
         /// <summary>
-        /// Gets Command property
+        ///     Gets Command property
         /// </summary>
         /// <param name="obj">the dependency object</param>
         /// <returns>The command property</returns>
         public static ICommand GetCommand(DependencyObject obj)
         {
-            return (ICommand)obj.GetValue(CommandProperty);
+            return (ICommand) obj.GetValue(CommandProperty);
         }
 
         /// <summary>
-        /// Sets Command property
+        ///     Sets Command property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <param name="value">The command object</param>
@@ -121,17 +120,17 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Gets AutoStart property
+        ///     Gets AutoStart property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <returns>AutoStart property</returns>
         public static bool GetAutoSort(DependencyObject obj)
         {
-            return (bool)obj.GetValue(AutoSortProperty);
+            return (bool) obj.GetValue(AutoSortProperty);
         }
 
         /// <summary>
-        /// Sets the AutoStart property
+        ///     Sets the AutoStart property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <param name="value">AutoStart property</param>
@@ -141,7 +140,7 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Gets the Name property
+        ///     Gets the Name property
         /// </summary>
         /// <param name="obj">The dependency object.</param>
         /// <returns>The Name property</returns>
@@ -151,7 +150,7 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Sets the Name property
+        ///     Sets the Name property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <param name="value">The Name property</param>
@@ -161,17 +160,17 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Gets the ShowSortGlyph property
+        ///     Gets the ShowSortGlyph property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <returns>The ShowSortGlyph property</returns>
         public static bool GetShowSortGlyph(DependencyObject obj)
         {
-            return (bool)obj.GetValue(ShowSortGlyphProperty);
+            return (bool) obj.GetValue(ShowSortGlyphProperty);
         }
 
         /// <summary>
-        /// Sets the ShowSortGlyph property
+        ///     Sets the ShowSortGlyph property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <param name="value">The ShowSortGlyph property</param>
@@ -181,17 +180,17 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Gets the SortGlyphAscending property
+        ///     Gets the SortGlyphAscending property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <returns>The SortGlyphAscending property</returns>
         public static ImageSource GetSortGlyphAscending(DependencyObject obj)
         {
-            return (ImageSource)obj.GetValue(SortGlyphAscendingProperty);
+            return (ImageSource) obj.GetValue(SortGlyphAscendingProperty);
         }
 
         /// <summary>
-        /// Sets the SortGlyphAscending property
+        ///     Sets the SortGlyphAscending property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <param name="value">The SortGlyphAscending property</param>
@@ -201,17 +200,17 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Gets the GetSortGlyphDescending property
+        ///     Gets the GetSortGlyphDescending property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <returns>The GetSortGlyphDescending property</returns>
         public static ImageSource GetSortGlyphDescending(DependencyObject obj)
         {
-            return (ImageSource)obj.GetValue(SortGlyphDescendingProperty);
+            return (ImageSource) obj.GetValue(SortGlyphDescendingProperty);
         }
 
         /// <summary>
-        /// Sets the SetSortGlyphDescending property
+        ///     Sets the SetSortGlyphDescending property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <param name="value">The SetSortGlyphDescending property</param>
@@ -221,17 +220,17 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Gets the GetSortedColumnHeader property
+        ///     Gets the GetSortedColumnHeader property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <returns>The GetSortedColumnHeader property</returns>
         public static GridViewColumnHeader GetSortedColumnHeader(DependencyObject obj)
         {
-            return (GridViewColumnHeader)obj.GetValue(SortedColumnHeaderProperty);
+            return (GridViewColumnHeader) obj.GetValue(SortedColumnHeaderProperty);
         }
 
         /// <summary>
-        /// Sets the SetSortedColumnHeader property
+        ///     Sets the SetSortedColumnHeader property
         /// </summary>
         /// <param name="obj">The dependency object</param>
         /// <param name="value">The SetSortedColumnHeader property</param>
@@ -240,8 +239,66 @@ namespace WiredTechSolutions.ShelvesetComparer
             obj.SetValue(SortedColumnHeaderProperty, value);
         }
 
+        #endregion
+
+        #region [Private]
+
         /// <summary>
-        /// The event handler for the click on the attached ColumnHeader.
+        ///     Property changed callback.
+        /// </summary>
+        /// <param name="dependencyObject">The dependency object.</param>
+        /// <param name="eventArgs">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void AutoSortPropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs eventArgs)
+        {
+            var listView = dependencyObject as ListView;
+
+            // Don't change click handler if a command is set
+            if (listView == null || GetCommand(listView) != null)
+            {
+                return;
+            }
+
+            var oldValue = (bool)eventArgs.OldValue;
+            var newValue = (bool)eventArgs.NewValue;
+            if (oldValue && !newValue)
+            {
+                listView.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(ColumnHeader_Click));
+            }
+
+            if (!oldValue && newValue)
+            {
+                listView.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(ColumnHeader_Click));
+            }
+        }
+
+        /// <summary>
+        /// Command property changed callback.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void CommandPropertyChangedCallback(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            var listView = o as ItemsControl;
+
+            // Don't change click handler if AutoSort enabled
+            if (listView == null || GetAutoSort(listView))
+            {
+                return;
+            }
+
+            if (e.OldValue != null && e.NewValue == null)
+            {
+                listView.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(ColumnHeader_Click));
+            }
+
+            if (e.OldValue == null && e.NewValue != null)
+            {
+                listView.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(ColumnHeader_Click));
+            }
+        }
+
+        /// <summary>
+        ///     The event handler for the click on the attached ColumnHeader.
         /// </summary>
         /// <param name="sender">The sender object</param>
         /// <param name="e">The event argument</param>
@@ -256,7 +313,7 @@ namespace WiredTechSolutions.ShelvesetComparer
                     ListView listView = GetAncestor<ListView>(headerClicked);
                     if (listView != null)
                     {
-                        ICommand command = GetCommand(listView);
+                        var command = GetCommand(listView);
                         if (command != null)
                         {
                             if (command.CanExecute(propertyName))
@@ -274,7 +331,7 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Generic method returning the ancestor of the given dependency object. 
+        ///     Generic method returning the ancestor of the given dependency object.
         /// </summary>
         /// <typeparam name="T">The type</typeparam>
         /// <param name="reference">The dependency object</param>
@@ -291,7 +348,7 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Applies sort using the given property Name on the given ICollectionView
+        ///     Applies sort using the given property Name on the given ICollectionView
         /// </summary>
         /// <param name="view">The View of the list</param>
         /// <param name="propertyName">The property on which items will be sorted.</param>
@@ -299,18 +356,20 @@ namespace WiredTechSolutions.ShelvesetComparer
         /// <param name="sortedColumnHeader">The column header that needs to be sorting to be applied.</param>
         private static void ApplySort(ICollectionView view, string propertyName, ListView listView, GridViewColumnHeader sortedColumnHeader)
         {
-            ListSortDirection direction = ListSortDirection.Ascending;
+            var direction = ListSortDirection.Ascending;
             if (view.SortDescriptions.Count > 0)
             {
                 SortDescription currentSort = view.SortDescriptions[0];
                 if (currentSort.PropertyName == propertyName)
                 {
-                    direction = (currentSort.Direction == ListSortDirection.Ascending) ? ListSortDirection.Descending : ListSortDirection.Ascending;
+                    direction = (currentSort.Direction == ListSortDirection.Ascending)
+                        ? ListSortDirection.Descending
+                        : ListSortDirection.Ascending;
                 }
 
                 view.SortDescriptions.Clear();
 
-                GridViewColumnHeader currentSortedColumnHeader = GetSortedColumnHeader(listView);
+                var currentSortedColumnHeader = GetSortedColumnHeader(listView);
                 if (currentSortedColumnHeader != null)
                 {
                     RemoveSortGlyph(currentSortedColumnHeader);
@@ -321,8 +380,11 @@ namespace WiredTechSolutions.ShelvesetComparer
             {
                 view.SortDescriptions.Add(new SortDescription(propertyName, direction));
                 if (GetShowSortGlyph(listView))
-                { 
-                  AddSortGlyph(sortedColumnHeader, direction, direction == ListSortDirection.Ascending ? GetSortGlyphAscending(listView) : GetSortGlyphDescending(listView));
+                {
+                    ImageSource sortGlyph = direction == ListSortDirection.Ascending
+                        ? GetSortGlyphAscending(listView)
+                        : GetSortGlyphDescending(listView);
+                    AddSortGlyph(sortedColumnHeader, direction, sortGlyph);
                 }
 
                 SetSortedColumnHeader(listView, sortedColumnHeader);
@@ -330,35 +392,36 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Adds the sort glyph to the given column header.
+        ///     Adds the sort glyph to the given column header.
         /// </summary>
         /// <param name="columnHeader">The column header where the glyph needs to be added</param>
         /// <param name="direction">The direction</param>
         /// <param name="sortGlyph">The glyph</param>
         private static void AddSortGlyph(GridViewColumnHeader columnHeader, ListSortDirection direction, ImageSource sortGlyph)
         {
-            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(columnHeader);
+            var adornerLayer = AdornerLayer.GetAdornerLayer(columnHeader);
             adornerLayer.Add(new SortGlyphAdorner(columnHeader, direction, sortGlyph));
         }
 
         /// <summary>
-        /// Removes the sort glyph to the given column header.
+        ///     Removes the sort glyph to the given column header.
         /// </summary>
         /// <param name="columnHeader">The column header from where the glyph needs to be removed.</param>
         private static void RemoveSortGlyph(GridViewColumnHeader columnHeader)
         {
-            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(columnHeader);
-            Adorner[] adorners = adornerLayer.GetAdorners(columnHeader);
-            if (adorners != null)
+            var adornerLayer = AdornerLayer.GetAdornerLayer(columnHeader);
+            var adorners = adornerLayer.GetAdorners(columnHeader);
+            if (adorners == null)
             {
-                foreach (Adorner adorner in adorners)
-                {
-                    if (adorner is SortGlyphAdorner)
-                    {
-                        adornerLayer.Remove(adorner);
-                    }
-                }
+                return;
+            }
+
+            foreach (var adorner in adorners.OfType<SortGlyphAdorner>())
+            {
+                adornerLayer.Remove(adorner);
             }
         }
+
+        #endregion
     }
 }

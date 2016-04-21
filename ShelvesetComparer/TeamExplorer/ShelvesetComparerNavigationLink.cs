@@ -1,30 +1,28 @@
-﻿// <copyright file="ShelvesetComparerNavigationLink.cs" company="http://shelvesetcomparer.codeplex.com">Copyright http://shelvesetcomparer.codeplex.com. All Rights Reserved. This code released under the terms of the Microsoft Public License (MS-PL, http://opensource.org/licenses/ms-pl.html.) This is sample code only, do not use in production environments.</copyright>
-namespace WiredTechSolutions.ShelvesetComparer
+﻿namespace Tfs.ShelvesetComparer.TeamExplorer
 {
     using System;
     using System.ComponentModel.Composition;
-    using System.Drawing;
-    using System.Reflection;
     using Microsoft.TeamFoundation.Controls;
     using Microsoft.VisualStudio.Shell;
+    using Base;
 
     /// <summary>
-    /// The class creates the navigation link for Shelveset Comparer extension.
+    ///     The class creates the navigation link for Shelveset Comparer extension.
     /// </summary>
-    [TeamExplorerNavigationLink(ShelvesetComparerNavigationLink.LinkId, TeamExplorerNavigationItemIds.MyWork, 1000)]
+    [TeamExplorerNavigationLink(LinkId, TeamExplorerNavigationItemIds.MyWork, 1000)]
     public class ShelvesetComparerNavigationLink : TeamExplorerBaseNavigationLink
     {
         /// <summary>
-        /// The unique Id given to the navigation link
+        ///     The unique Id given to the navigation link
         /// </summary>
         public const string LinkId = "A1EC4AFD-FEBF-499B-82F7-E51F987D30D2";
 
         /// <summary>
-        /// Initializes a new instance of the ShelvesetComparerNavigationLink class.
+        ///     Initializes a new instance of the ShelvesetComparerNavigationLink class.
         /// </summary>
         /// <param name="serviceProvider">The service provider</param>
         [ImportingConstructor]
-        public ShelvesetComparerNavigationLink([Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider)
+        public ShelvesetComparerNavigationLink([Import(typeof (SVsServiceProvider))] IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
             this.Text = Resources.TeamExplorerLinkCaption;
@@ -33,17 +31,14 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Overridden method called when the navigation link is clicked.
+        ///     Overridden method called when the navigation link is clicked.
         /// </summary>
         public override void Execute()
         {
             try
             {
-                ITeamExplorer teamExplorer = GetService<ITeamExplorer>();
-                if (teamExplorer != null)
-                {
-                    teamExplorer.NavigateToPage(new Guid(ShelvesetComparerPage.PageId), null);
-                }
+                ITeamExplorer teamExplorer = this.GetService<ITeamExplorer>();
+                teamExplorer?.NavigateToPage(new Guid(ShelvesetComparerPage.PageId), null);
             }
             catch (Exception ex)
             {
@@ -52,7 +47,7 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Overridden method called when the navigation link is refreshed.
+        ///     Overridden method called when the navigation link is refreshed.
         /// </summary>
         public override void Invalidate()
         {

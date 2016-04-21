@@ -1,5 +1,16 @@
-﻿// <copyright file="SelectShelvesetSection.cs" company="http://shelvesetcomparer.codeplex.com">Copyright http://shelvesetcomparer.codeplex.com. All Rights Reserved. This code released under the terms of the Microsoft Public License (MS-PL, http://opensource.org/licenses/ms-pl.html.) This is sample code only, do not use in production environments.</copyright>
-namespace WiredTechSolutions.ShelvesetComparer
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SelectShelvesetSection.cs" company="http://shelvesetcomparer.codeplex.com">
+//     Copyright http://shelvesetcomparer.codeplex.com. All Rights Reserved.
+//     This code released under the terms of the Microsoft Public License(MS-PL, http://opensource.org/licenses/ms-pl.html.)
+//     This is sample code only, do not use in production environments.
+// </copyright>
+// <summary>
+//   The class creates the team explorer section for the Shelveset Comparer extension.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+
+namespace Tfs.ShelvesetComparer.TeamExplorer
 {
     using System;
     using System.Collections.ObjectModel;
@@ -8,20 +19,21 @@ namespace WiredTechSolutions.ShelvesetComparer
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.Controls;
     using Microsoft.TeamFoundation.VersionControl.Client;
+    using Base;
 
     /// <summary>
-    /// The class creates the team explorer section for the Shelveset Comparer extension.
+    ///     The class creates the team explorer section for the Shelveset Comparer extension.
     /// </summary>
     [TeamExplorerSection("1555C86B-9D88-4AA6-9B85-99D97710BD74", ShelvesetComparerPage.PageId, 20)]
     public class SelectShelvesetSection : TeamExplorerBaseSection
     {
         /// <summary>
-        /// Contains the shelveset list
+        ///     Contains the shelveset list
         /// </summary>
         private ObservableCollection<Shelveset> shelvesets;
 
         /// <summary>
-        /// Initializes a new instance of the SelectShelvesetSection class.
+        ///     Initializes a new instance of the SelectShelvesetSection class.
         /// </summary>
         public SelectShelvesetSection()
         {
@@ -32,21 +44,21 @@ namespace WiredTechSolutions.ShelvesetComparer
             this.IsExpanded = true;
             this.IsBusy = false;
             this.shelvesets = new ObservableCollection<Shelveset>();
-            this.SectionContent = new SelectShelvesetTeamExplorerView(this);
+            this.SectionContent = new Views.SelectShelvesetTeamExplorerView(this);
         }
 
         /// <summary>
-        /// Gets or sets the user account name for first shelveset.
+        ///     Gets or sets the user account name for first shelveset.
         /// </summary>
         public string FirstUserAccountName { get; set; }
 
         /// <summary>
-        /// Gets or sets the user account name for second shelveset.
+        ///     Gets or sets the user account name for second shelveset.
         /// </summary>
         public string SecondUserAccountName { get; set; }
 
         /// <summary>
-        /// Gets or sets the shelveset list
+        ///     Gets or sets the shelveset list
         /// </summary>
         public ObservableCollection<Shelveset> Shelvesets
         {
@@ -64,39 +76,27 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Gets Team Foundation Context of the Team Explorer window.
+        ///     Gets Team Foundation Context of the Team Explorer window.
         /// </summary>
-        public ITeamFoundationContext Context
-        {
-            get
-            {
-                return this.CurrentContext;
-            }
-        }
+        public ITeamFoundationContext Context => this.CurrentContext;
 
         /// <summary>
-        /// Gets the view of the current Team Explorer section
+        ///     Gets the view of the current Team Explorer section
         /// </summary>
-        protected SelectShelvesetTeamExplorerView View
-        {
-            get 
-            { 
-                return this.SectionContent as SelectShelvesetTeamExplorerView; 
-            }
-        }
+        protected Views.SelectShelvesetTeamExplorerView View => this.SectionContent as Views.SelectShelvesetTeamExplorerView;
 
         /// <summary>
-        /// Overridden method that initializes the team explorer section
+        ///     Overridden method that initializes the team explorer section
         /// </summary>
         /// <param name="sender">The sender object</param>
         /// <param name="e">The event arguments</param>
-        public async override void Initialize(object sender, SectionInitializeEventArgs e)
+        public override async void Initialize(object sender, SectionInitializeEventArgs e)
         {
             base.Initialize(sender, e);
             var sectionContext = e.Context as ShelvesetsContext;
             if (sectionContext != null)
             {
-                ShelvesetsContext context = sectionContext;
+                var context = sectionContext;
                 this.Shelvesets = context.Shelvesets;
             }
             else
@@ -106,16 +106,16 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Refresh override.
+        ///     Refresh override.
         /// </summary>
-        public async override void Refresh()
+        public override async void Refresh()
         {
             base.Refresh();
             await this.RefreshAsync();
         }
 
         /// <summary>
-        /// Save the current state of the section
+        ///     Save the current state of the section
         /// </summary>
         /// <param name="sender">The sender object</param>
         /// <param name="e">The event arguments</param>
@@ -132,37 +132,37 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Refresh the list of shelveset shelveset asynchronously.
+        ///     Refresh the list of shelveset shelveset asynchronously.
         /// </summary>
         /// <returns>The Task doing the refresh. Needed for Async methods</returns>
-        public async System.Threading.Tasks.Task RefreshShelvesets()
+        public async Task RefreshShelvesets()
         {
-            var shelvesets = new ObservableCollection<Shelveset>();
+            var shelveSets = new ObservableCollection<Shelveset>();
 
             // Make the server call asynchronously to avoid blocking the UI
-            await Task.Run(() =>
-            {
-                FetchShevlesets(this.FirstUserAccountName, this.SecondUserAccountName, this.CurrentContext, out shelvesets);
-            });
+            await
+                Task.Run(
+                    () =>
+                    {
+                        FetchShevlesets(this.FirstUserAccountName, this.SecondUserAccountName, this.CurrentContext,
+                            out shelveSets);
+                    });
 
-            this.Shelvesets = shelvesets;
+            this.Shelvesets = shelveSets;
         }
 
         /// <summary>
-        /// Opens up the shelveset details page for the given shelveset
+        ///     Opens up the shelveset details page for the given shelveset
         /// </summary>
         /// <param name="shelveset">The shelveset to be displayed.</param>
         public void ViewShelvesetDetails(Shelveset shelveset)
         {
             ITeamExplorer teamExplorer = this.GetService<ITeamExplorer>();
-            if (teamExplorer != null)
-            {
-                teamExplorer.NavigateToPage(new Guid(TeamExplorerPageIds.ShelvesetDetails), shelveset);
-            }
+            teamExplorer?.NavigateToPage(new Guid(TeamExplorerPageIds.ShelvesetDetails), shelveset);
         }
 
         /// <summary>
-        /// the method is invoked when the context of the current team explorer window has changed.
+        ///     the method is invoked when the context of the current team explorer window has changed.
         /// </summary>
         /// <param name="sender">The sender object</param>
         /// <param name="e">The event arguments</param>
@@ -178,13 +178,14 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Retrieves the shelveset list for the current user 
+        ///     Retrieves the shelveset list for the current user
         /// </summary>
         /// <param name="userName">The user name </param>
         /// <param name="secondUsername">The second user name </param>
         /// <param name="context">The Team foundation server context</param>
         /// <param name="shelveSets">The shelveset list to be returned</param>
-        private static void FetchShevlesets(string userName, string secondUsername, ITeamFoundationContext context, out ObservableCollection<Shelveset> shelveSets)
+        private static void FetchShevlesets(string userName, string secondUsername, ITeamFoundationContext context,
+            out ObservableCollection<Shelveset> shelveSets)
         {
             shelveSets = new ObservableCollection<Shelveset>();
             if (context != null && context.HasCollection && context.HasTeamProject)
@@ -201,7 +202,8 @@ namespace WiredTechSolutions.ShelvesetComparer
                     if (!string.IsNullOrWhiteSpace(secondUsername) && secondUsername != userName)
                     {
                         user = string.IsNullOrWhiteSpace(secondUsername) ? vcs.AuthorizedUser : secondUsername;
-                        foreach (var shelveSet in vcs.QueryShelvesets(null, user).OrderByDescending(s => s.CreationDate))
+                        foreach (var shelveSet in vcs.QueryShelvesets(null, user).OrderByDescending(s => s.CreationDate)
+                            )
                         {
                             shelveSets.Add(shelveSet);
                         }
@@ -211,10 +213,10 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Refresh the list of shelveset and comparison shelveset asynchronously.
+        ///     Refresh the list of shelveset and comparison shelveset asynchronously.
         /// </summary>
         /// <returns>The Task doing the refresh. Needed for Async methods</returns>
-        private async System.Threading.Tasks.Task RefreshAsync()
+        private async Task RefreshAsync()
         {
             try
             {

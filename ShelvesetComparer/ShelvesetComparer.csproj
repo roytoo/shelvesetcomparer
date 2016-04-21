@@ -6,7 +6,21 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == ''">
     <Configuration Condition="'$(VisualStudioVersion)' == '11.0'">VS2012_Debug</Configuration>
@@ -22,22 +36,8 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>4.0</OldToolsVersion>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <OldToolsVersion>12.0</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
@@ -48,10 +48,10 @@
     <ProjectGuid>{B63E4DB4-AA73-419A-B650-20DEF861E94C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WiredTechSolutions.ShelvesetComparer</RootNamespace>
-    <AssemblyName>ShelvesetComparer</AssemblyName>
+    <RootNamespace>Tfs.ShelvesetComparer</RootNamespace>
+    <AssemblyName>ShelvesetComparer.Next</AssemblyName>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>Properties\Key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Alexander Varchenko.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'VS2012_Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -132,45 +132,7 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <!-- When targeting VS 2012, add references to the VS 2012 client object model -->
-  <ItemGroup Condition="'$(Configuration)' == 'VS2012_Debug' or '$(Configuration)' == 'VS2012_Release'">
-    <Reference Include="Microsoft.VisualStudio.Shell.11.0" />
-    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferenceVS2012\Microsoft.TeamFoundation.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferenceVS2012\Microsoft.TeamFoundation.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferenceVS2012\Microsoft.TeamFoundation.Controls.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferenceVS2012\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <!-- When targeting VS 2013, add references to the VS 2013 client object model -->
-  <ItemGroup Condition="'$(Configuration)' == 'VS2013_Debug' or '$(Configuration)' == 'VS2013_Release'">
-    <Reference Include="Microsoft.VisualStudio.Shell.12.0" />
-    <Reference Include="Microsoft.TeamFoundation.Client, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferenceVS2013\Microsoft.TeamFoundation.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Common, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferenceVS2013\Microsoft.TeamFoundation.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Controls, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferenceVS2013\Microsoft.TeamFoundation.Controls.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ReferenceVS2013\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <!-- When targeting VS 2015, add references to the VS 2015 client object model -->
   <ItemGroup Condition="'$(Configuration)' == 'VS2015_Debug' or '$(Configuration)' == 'VS2015_Release'">
     <Reference Include="Microsoft.VisualStudio.Shell.14.0" />
@@ -344,13 +306,8 @@
     </Content>
     <Content Include="vs2015.extension.vsixmanifest" />
     <EmbeddedResource Include="Resources\magnifier.png" />
-    <Content Include="vs2012.extension.vsixmanifest" />
-    <None Include="vs2013.extension.vsixmanifest">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Key.snk" />
+    <None Include="Alexander Varchenko.pfx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <VSCTCompile Include="ShelvesetComparer.vsct">
@@ -397,7 +354,13 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

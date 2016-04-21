@@ -1,5 +1,14 @@
-﻿// <copyright file="SortGlyphAdorner.cs" company="http://shelvesetcomparer.codeplex.com">Copyright http://shelvesetcomparer.codeplex.com. All Rights Reserved. This code released under the terms of the Microsoft Public License (MS-PL, http://opensource.org/licenses/ms-pl.html.) This is sample code only, do not use in production environments.</copyright>
-namespace WiredTechSolutions.ShelvesetComparer
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SortGlyphAdorner.cs" company="">
+//
+// </copyright>
+// <summary>
+//   The class creates a layer on top of Grid Column headers showing the ascending or descending arrow based on how the
+//   sort is selected.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Tfs.ShelvesetComparer.ViewExtensions
 {
     using System.ComponentModel;
     using System.Windows;
@@ -8,27 +17,28 @@ namespace WiredTechSolutions.ShelvesetComparer
     using System.Windows.Media;
 
     /// <summary>
-    /// The class creates a layer on top of Grid Column headers showing the ascending or descending arrow based on how the sort is selected.
+    ///     The class creates a layer on top of Grid Column headers showing the ascending or descending arrow based on how the
+    ///     sort is selected.
     /// </summary>
     internal class SortGlyphAdorner : Adorner
     {
         /// <summary>
-        /// The underlying column  header.
+        ///     The underlying column  header.
         /// </summary>
-        private GridViewColumnHeader columnHeader;
+        private readonly GridViewColumnHeader columnHeader;
 
         /// <summary>
-        /// The current sort direction
+        ///     The current sort direction
         /// </summary>
-        private ListSortDirection direction;
+        private readonly ListSortDirection direction;
 
         /// <summary>
-        /// The Image glyph to be shown on column
+        ///     The Image glyph to be shown on column
         /// </summary>
-        private ImageSource sortGlyph;
+        private readonly ImageSource sortGlyph;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortGlyphAdorner"/> class.
+        ///     Initializes a new instance of the <see cref="SortGlyphAdorner" /> class.
         /// </summary>
         /// <param name="columnHeader">The column header</param>
         /// <param name="direction">The direction</param>
@@ -42,7 +52,7 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// The overridden OnRender method that displays image on top of attached UIElement.
+        ///     The overridden OnRender method that displays image on top of attached UIElement.
         /// </summary>
         /// <param name="drawingContext">The drawing context object.</param>
         protected override void OnRender(DrawingContext drawingContext)
@@ -51,9 +61,9 @@ namespace WiredTechSolutions.ShelvesetComparer
 
             if (this.sortGlyph != null)
             {
-                double x = this.columnHeader.ActualWidth - 13;
-                double y = (this.columnHeader.ActualHeight / 2) - 5;
-                Rect rect = new Rect(x, y, 10, 10);
+                var x = this.columnHeader.ActualWidth - 13;
+                var y = (this.columnHeader.ActualHeight / 2) - 5;
+                var rect = new Rect(x, y, 10, 10);
                 drawingContext.DrawImage(this.sortGlyph, rect);
             }
             else
@@ -63,34 +73,30 @@ namespace WiredTechSolutions.ShelvesetComparer
         }
 
         /// <summary>
-        /// Returns the Glyph to display
+        ///     Returns the Glyph to display
         /// </summary>
         /// <returns>Glyph object</returns>
         private Geometry GetDefaultGlyph()
         {
-            double x1 = this.columnHeader.ActualWidth - 13;
-            double x2 = x1 + 10;
-            double x3 = x1 + 5;
-            double y1 = (this.columnHeader.ActualHeight / 2) - 3;
-            double y2 = y1 + 5;
+            var x1 = this.columnHeader.ActualWidth - 13;
+            var x2 = x1 + 10;
+            var x3 = x1 + 5;
+            var y1 = (this.columnHeader.ActualHeight / 2) - 3;
+            var y2 = y1 + 5;
 
             if (this.direction == ListSortDirection.Ascending)
             {
-                double tmp = y1;
+                var tmp = y1;
                 y1 = y2;
                 y2 = tmp;
             }
 
-            PathSegmentCollection pathSegmentCollection = new PathSegmentCollection();
+            var pathSegmentCollection = new PathSegmentCollection();
             pathSegmentCollection.Add(new LineSegment(new Point(x2, y1), true));
             pathSegmentCollection.Add(new LineSegment(new Point(x3, y2), true));
-
-            PathFigure pathFigure = new PathFigure(new Point(x1, y1), pathSegmentCollection, true);
-
-            PathFigureCollection pathFigureCollection = new PathFigureCollection();
-            pathFigureCollection.Add(pathFigure);
-
-            PathGeometry pathGeometry = new PathGeometry(pathFigureCollection);
+            var pathFigure = new PathFigure(new Point(x1, y1), pathSegmentCollection, true);
+            var pathFigureCollection = new PathFigureCollection { pathFigure };
+            var pathGeometry = new PathGeometry(pathFigureCollection);
             return pathGeometry;
         }
     }
